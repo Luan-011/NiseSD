@@ -1,11 +1,4 @@
-import { StackNavigationProp } from "@react-navigation/stack";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import {
-  NavigationContainer,
-  NavigationProp,
-  RouteProp,
-} from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -14,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Modal,
   Alert,
 } from "react-native";
 import EmotionButton from "./EmotionButton";
@@ -22,7 +14,9 @@ import PrimaryButton from "./PrimarryButton";
 import SecondaryButton from "./SecundaryButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SvgComponentVoltar from "./assets/SetaBack";
-import { Avaliacoes } from "./App";
+
+// Importação vinda do arquivo de serviço para limpar o ciclo
+import { Avaliacoes } from "./userService";
 
 interface Emotion {
   name: string;
@@ -41,6 +35,7 @@ const DailyEvaluationScreen: React.FC = () => {
     { name: "Ansiedade", emoji: "😟" },
     { name: "Antipatia", emoji: "😒" },
   ];
+
   const confirm = () => {
     Alert.alert(
       "Deseja voltar?",
@@ -48,7 +43,7 @@ const DailyEvaluationScreen: React.FC = () => {
       [
         {
           text: "Não",
-          onPress: () => navigation.goBack,
+          onPress: () => {},
           style: "cancel",
         },
         {
@@ -57,22 +52,18 @@ const DailyEvaluationScreen: React.FC = () => {
           style: "destructive",
         },
       ],
-      {
-        cancelable: true,
-        onDismiss: () => navigation.goBack,
-      }
+      { cancelable: true }
     );
   };
 
-  const { goBack } = useNavigation();
   const [buttonDia, setButtonDia] = useState("");
   const [buttonCrise, setButtonCrise] = useState("");
   const [acontecimentos, setAcontecimentos] = useState("");
   const [selectedEmotions, setSelectedEmotions] = useState<Emotion[]>([]);
 
   function registrar() {
-    if (buttonDia == "" || buttonCrise == "") {
-      Alert.alert('Erro',"Preencha todos os campos!");
+    if (buttonDia === "" || buttonCrise === "") {
+      Alert.alert('Erro', "Preencha todos os campos!");
     } else {
       Avaliacoes.push({
         id: Avaliacoes.length,
@@ -82,12 +73,12 @@ const DailyEvaluationScreen: React.FC = () => {
         emotions: selectedEmotions,
       });
       Alert.alert("Salvo!", "Registros salvos em Meus Registros.");
-      goBack();
+      navigation.goBack();
     }
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#E3ECFF" }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
@@ -126,51 +117,42 @@ const DailyEvaluationScreen: React.FC = () => {
               style={[
                 styles.optionButton,
                 {
-                  backgroundColor: buttonDia == "Ruim" ? "#F67A49" : "#ffffff",
-                  borderWidth: buttonDia == "Ruim" ? 0 : 1,
-                  borderRadius: 10,
-                  borderColor: "#000",
+                  backgroundColor: buttonDia === "Ruim" ? "#F67A49" : "#ffffff",
+                  borderWidth: buttonDia === "Ruim" ? 0 : 1,
                 },
               ]}
             >
-              <Text>Ruim</Text>
+              <Text style={{ color: buttonDia === "Ruim" ? "#fff" : "#000" }}>Ruim</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setButtonDia("Neutro")}
               style={[
                 styles.optionButton,
                 {
-                  backgroundColor:
-                    buttonDia == "Neutro" ? "#FFD980" : "#ffffff",
-                  borderWidth: buttonDia == "Neutro" ? 0 : 1,
-                  borderRadius: 10,
-                  borderColor: "#000",
+                  backgroundColor: buttonDia === "Neutro" ? "#FFD980" : "#ffffff",
+                  borderWidth: buttonDia === "Neutro" ? 0 : 1,
                 },
               ]}
             >
-              <Text>Neutro</Text>
+              <Text style={{ color: "#000" }}>Neutro</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setButtonDia("Bom")}
               style={[
                 styles.optionButton,
                 {
-                  backgroundColor: buttonDia == "Bom" ? "#8C91FD" : "#ffffff",
-                  borderWidth: buttonDia == "Bom" ? 0 : 1,
-                  borderRadius: 10,
-                  borderColor: "#000",
+                  backgroundColor: buttonDia === "Bom" ? "#8C91FD" : "#ffffff",
+                  borderWidth: buttonDia === "Bom" ? 0 : 1,
                 },
               ]}
             >
-              <Text>Bom</Text>
+              <Text style={{ color: buttonDia === "Bom" ? "#fff" : "#000" }}>Bom</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Como foi seu dia?
-          </Text>
+          <Text style={styles.sectionTitle}>Como foi seu dia?</Text>
           <TextInput
             style={styles.textInput}
             multiline
@@ -188,34 +170,30 @@ const DailyEvaluationScreen: React.FC = () => {
               style={[
                 styles.optionButton,
                 {
-                  backgroundColor: buttonCrise == "sim" ? "#F67A49" : "#ffffff",
-                  borderWidth: buttonCrise == "sim" ? 0 : 1,
-                  borderRadius: 10,
-                  borderColor: "#000",
+                  backgroundColor: buttonCrise === "sim" ? "#F67A49" : "#ffffff",
+                  borderWidth: buttonCrise === "sim" ? 0 : 1,
                 },
               ]}
             >
-              <Text>Sim</Text>
+              <Text style={{ color: buttonCrise === "sim" ? "#fff" : "#000" }}>Sim</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setButtonCrise("nao")}
               style={[
                 styles.optionButton,
                 {
-                  backgroundColor: buttonCrise == "nao" ? "#8C91FD" : "#ffffff",
-                  borderWidth: buttonCrise == "nao" ? 0 : 1,
-                  borderRadius: 10,
-                  borderColor: "#000",
+                  backgroundColor: buttonCrise === "nao" ? "#8C91FD" : "#ffffff",
+                  borderWidth: buttonCrise === "nao" ? 0 : 1,
                 },
               ]}
             >
-              <Text>Não</Text>
+              <Text style={{ color: buttonCrise === "nao" ? "#fff" : "#000" }}>Não</Text>
             </TouchableOpacity>
           </View>
         </View>
 
+        {/* 🌟 CONTAINER DE BOTÕES ATUALIZADO: Alinhamento limpo e sem esmagamento */}
         <View style={styles.buttonContainer}>
-          <SecondaryButton title="Cancelar" />
           <PrimaryButton title="Registrar" onPress={registrar} />
         </View>
       </ScrollView>
@@ -229,22 +207,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#E3ECFF",
   },
-  backButton: {
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: "#FBB03B",
-    alignSelf: "flex-start",
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#fff",
-  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#1E1E1E",
   },
   section: {
     backgroundColor: "#fff",
@@ -256,6 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#1E1E1E",
   },
   emotionsContainer: {
     flexDirection: "row",
@@ -268,10 +237,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   optionButton: {
-    backgroundColor: "#fff",
     padding: 10,
     borderRadius: 10,
-    borderWidth: 1,
     borderColor: "#000",
     width: "30%",
     alignItems: "center",
@@ -283,11 +250,17 @@ const styles = StyleSheet.create({
     padding: 10,
     height: 80,
     textAlignVertical: "top",
+    color: "#000",
   },
+  // 🌟 ESTILOS REORGANIZADOS: 
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-  },
+    justifyContent: "space-around", // Distribui os botões nativamente mantendo o tamanho original deles
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 30,
+    width: "100%",
+  }
 });
 
 export default DailyEvaluationScreen;

@@ -1,48 +1,34 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
   View,
   Text,
-  Alert,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import {
-  NavigationContainer,
   NavigationProp,
-  RouteProp,
   useNavigation,
 } from "@react-navigation/native";
-
-import RegisterSection from "./RegisterSection";
-import ExerciseCard from "./ExerciseCard";
-import WelcomeScreen from "./WelcomeScreen";
-import DailyEvaluationScreen from "./DailyEvaluationScreen";
-import SplashScreen from "./Splas";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SvgComponentDiario from "./assets/diario";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Ícone para o card da IA
+
+// Importação de Componentes Locais
+import RegisterSection from "./RegisterSection";
+
+// Importação de Assets SVG
 import SvgComponentRedeDeApoio from "./assets/RedeDeApoio";
 import SvgComponentMeditacao from "./assets/Meditacao";
-import SvgComponentOndasSonoras from "./assets/OndasSonoras";
 import SvgComponentRespiracao from "./assets/Respiracao";
 import SvgComponentMindFulness from "./assets/Mindfulness";
 import SvgComponentPsicofobia from "./assets/LerArtigos";
 import SvgComponentRegistros from "./assets/Registros";
 
-// Definindo o tipo para as props de navegação
 type RootStackParamList = {
   Welcome: undefined;
   DailyEvaluationScreen: undefined;
 };
-
-type TelaProp = {
-  navigation: StackNavigationProp<RootStackParamList, "Welcome">;
-};
-
-const { Navigator, Screen } = createNativeStackNavigator();
 
 function Tela1() {
   const navigation = useNavigation<NavigationProp<any>>();
@@ -55,19 +41,14 @@ function Tela1() {
     navigation.navigate("LerArtigos");
   };
 
-  const handleSoundWavesPress = () => {
-    navigation.navigate("OndasSonoras");
-  };
-
   const handleBreathingPress = () => {
     navigation.navigate("Respiracao");
   };
-  const handleDiario = () => {
-    navigation.navigate("Diario");
-  };
+
   const handleRedeDeApoio = () => {
     navigation.navigate("RedeDeApoio");
   };
+
   const handleMindFuness = () => {
     navigation.navigate("MindFulness");
   };
@@ -76,15 +57,20 @@ function Tela1() {
     navigation.navigate("TelaDeTestes");
   };
 
+  // 🌟 NOVO: Abre a tela da IA passando o ID do paciente de teste
+  const handleIA = () => {
+    navigation.navigate("FeedbackIA", {
+      idPaciente: "85ac60a9-4c6a-4e41-bf15-a16d71f4a3cd",
+    });
+  };
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
       >
         <RegisterSection />
-
-        <View style={styles.mainSection}></View>
 
         <View style={styles.exerciseSection}>
           <Text style={styles.exerciseTitle}>Para exercitar</Text>
@@ -101,10 +87,7 @@ function Tela1() {
                 <SvgComponentMeditacao />
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.card}
-                onPress={handleBreathingPress}
-              >
+              <TouchableOpacity style={styles.card} onPress={handleBreathingPress}>
                 <SvgComponentRespiracao />
               </TouchableOpacity>
 
@@ -114,6 +97,18 @@ function Tela1() {
             </ScrollView>
           </View>
         </View>
+
+        {/* 🌟 NOVO CARD: Chamada estilizada para a inteligência artificial Nise IA */}
+        <TouchableOpacity style={styles.iaCard} onPress={handleIA}>
+          <View style={styles.iaContent}>
+            <Icon name="brain" size={32} color="#1E1E1E" style={styles.iaIcon} />
+            <View style={styles.iaTextContainer}>
+              <Text style={styles.iaTitle}>Nise Inteligência Artificial</Text>
+              <Text style={styles.iaSubtitle}>Veja a análise do seu bem-estar emocional</Text>
+            </View>
+            <Icon name="chevron-right" size={24} color="#1E1E1E" />
+          </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={handleSearchPress} style={styles.searchBar}>
           <SvgComponentPsicofobia />
@@ -127,25 +122,16 @@ function Tela1() {
   );
 }
 
-const Tela: React.FC<TelaProp> = () => {
-  return (
-    <NavigationContainer>
-      <Navigator screenOptions={{ headerShown: false }}>
-        <Screen name="home" component={Tela} />
-        <Screen name="Welcome" component={WelcomeScreen} />
-        <Screen name="DailyEvaluation" component={DailyEvaluationScreen} />
-      </Navigator>
-    </NavigationContainer>
-  );
-};
-
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#ffffff", // Background color adjusted
+    backgroundColor: "#ffffff",
   },
-
   card: {
     width: 140,
     height: 160,
@@ -155,11 +141,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
-  mainSection: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginBottom: 20,
-  },
   exerciseSection: {
     marginBottom: 20,
     justifyContent: "space-around",
@@ -168,6 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     fontWeight: "bold",
+    color: "#000000",
   },
   exerciseCards: {
     flexDirection: "row",
@@ -177,10 +159,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  searchImage: {
+  // 🌟 ESTILOS DO NOVO CARD DA IA (Combinando com o design do botão amarelo do login)
+  iaCard: {
     width: "100%",
-    height: 150,
-    resizeMode: "contain",
+    backgroundColor: "#FFB201",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  iaContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iaIcon: {
+    marginRight: 12,
+  },
+  iaTextContainer: {
+    flex: 1,
+  },
+  iaTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#1E1E1E",
+    marginBottom: 2,
+  },
+  iaSubtitle: {
+    fontSize: 12,
+    color: "#4A4A4A",
   },
 });
 

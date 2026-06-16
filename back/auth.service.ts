@@ -1,23 +1,19 @@
-import axios from "axios";
-import { PostLoginEndpoint } from "./api.endpoints";
+import axios from 'axios';
 
-export const loginApiCall = async(
-    senha: string,
-    email: string
-) =>{
-    console.log(senha+" "+email)
-    const variavel = axios.post(PostLoginEndpoint,
-        {
-            email: email,
-            senha: senha
-        }
-    ).then((response) =>{
-        console.log(response.data)
-        return response.data
-    })
-    .catch((error)=>{
-        console.log(error)
-    })
+// Certifique-se de que a URL base está com o seu Ngrok atualizado
+const API_URL = "https://vascular-virtuous-acutely.ngrok-free.dev";
 
-    return variavel
-}
+export const loginApiCall = async (email: string, password: string) => {
+  try {
+    // 📢 O SEGREDO ESTÁ AQUI: Precisa ser /auth/signin para Logar!
+    const response = await axios.post(`${API_URL}/auth/signin`, {
+      email,
+      password // Garanta também que o nome aqui seja password, não senha
+    });
+    
+    return response.data; // Retorna o token de sucesso
+  } catch (error) {
+    console.error("Erro na chamada de login da API:", error);
+    throw error;
+  }
+};

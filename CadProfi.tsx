@@ -21,7 +21,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SvgComponentLogoAzulInicio from "./assets/LogoAzulInicio";
 import SvgComponentMeninaEntrar from "./assets/MeninaFelizEntrar";
 import { reloadAppAsync } from "expo";
-
+import { editarNome } from "./userService";
 
 function CadProfi(){
   const navigation = useNavigation<NavigationProp<any>>();

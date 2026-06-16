@@ -1,32 +1,64 @@
-
 import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  Image,
   Text,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ImageBackground,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { NavigationProp } from "@react-navigation/native";
-import SvgComponentLogoAzulInicio from "./assets/LogoAzulInicio";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// 🌟 IMPORTAÇÕES DOS SEUS COMPONENTES E DA API
+import SvgComponentLogoAzulInicio from "./assets/LogoAzulInicio";
 import SvgComponentVoltar from "./assets/SetaBack";
 import SvgComponentMeninaEntrar from "./assets/MeninaFelizEntrar";
+import { loginApiCall } from "./back/auth.service"; // Ajuste o caminho se sua pasta 'back' estiver em outro nível
 
 interface EntrarScreenProps {
   navigation: NavigationProp<any>;
+  setIsLogged: () => void;
 }
 
-const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation }) => {
+const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation, setIsLogged }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  
+  // 🌟 ESTADOS ADICIONADOS: Para capturar o que o usuário digita
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    navigation.navigate("Tela1");
+  // 🌟 FUNÇÃO DE LOGIN ADAPTADA PARA A SUA API REAL
+  const handleLogin = async () => {
+    if (email.trim() === "" || senha.trim() === "") {
+      Alert.alert("Erro", "Por favor, preencha todos os campos!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Dispara a requisição para o endpoint do Ngrok
+// ✅ CORREÇÃO: Email primeiro, depois Senha
+const resultado = await loginApiCall(email, senha);
+      // Se a API retornar dados válidos (geralmente um token ou os dados do usuário)
+      if (resultado) {
+        if (setIsLogged) {
+          setIsLogged(); // Destrava o App.tsx e te joga para a Home real!
+        }
+      } else {
+        Alert.alert("Erro de Autenticação", "Não foi possível realizar o login. Verifique suas credenciais.");
+      }
+    } catch (error) {
+      console.log("Erro no fluxo de login:", error);
+      Alert.alert("Erro de Conexão", "Falha ao comunicar com o servidor.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRedefinir = () => {
@@ -43,12 +75,12 @@ const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ImageBackground
-        source={require("./assets/entrar.jpg")}
+        source={require("./assets/entrar.png")}
         style={styles.backgroundImage}
       >
         <SafeAreaView>
           <View style={styles.containerImagensVoltar}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <SvgComponentVoltar />
             </TouchableOpacity>
             <SvgComponentLogoAzulInicio />
@@ -69,6 +101,9 @@ const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation }) => {
                   placeholder="E-mail"
                   placeholderTextColor="#A3A3A3"
                   keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}          // 🌟 Vinculado ao estado
+                  onChangeText={setEmail} // 🌟 Atualiza o estado
                 />
               </View>
               <View style={styles.inputContainer}>
@@ -78,6 +113,8 @@ const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation }) => {
                   placeholder="Senha"
                   placeholderTextColor="#A3A3A3"
                   secureTextEntry={!passwordVisible}
+                  value={senha}          // 🌟 Vinculado ao estado
+                  onChangeText={setSenha} // 🌟 Atualiza o estado
                 />
                 <TouchableOpacity
                   onPress={() => setPasswordVisible(!passwordVisible)}
@@ -96,9 +133,17 @@ const EntrarScreen: React.FC<EntrarScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={styles.submitButton} onPress={handleLogin}>
-            <Text style={styles.submitButtonText}>Entrar</Text>
+          
+          <TouchableOpacity 
+            style={[styles.submitButton, loading && { opacity: 0.7 }]} 
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            <Text style={styles.submitButtonText}>
+              {loading ? "Carregando..." : "Entrar"}
+            </Text>
           </TouchableOpacity>
+          
           <View style={styles.link2}>
             <TouchableOpacity onPress={handleCriar}>
               <Text style={styles.signUpText}>

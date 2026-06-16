@@ -21,7 +21,9 @@ import SvgComponentComponente5 from "./assets/Componente5";
 import SvgComponentNome from "./assets/CoisoDoNome";
 import SvgComponentLogoHeader from "./assets/LogoHeader";
 import SvgComponentConfig from "./assets/Config";
-import { Usuario } from "./App";
+
+// ⚠️ CORREÇÃO DA LINHA 24: Puxa o usuário do serviço isolado e limpa o looping!
+import { obterUsuario } from "./userService";
 
 type RootStackParamList = {
   Welcome: undefined;
@@ -37,6 +39,9 @@ const { Navigator, Screen } = createNativeStackNavigator();
 const RegisterSection: React.FC = () => {
   const navigation = useNavigation<NavigationProp<any>>();
 
+  // Busca os dados do usuário do serviço isolado
+  const usuario = obterUsuario();
+
   return (
     <View>
       <View style={styles.header}>
@@ -45,14 +50,12 @@ const RegisterSection: React.FC = () => {
             style={styles.coisaDoNome}
             source={require("./assets/coisaDoNome.png")}
           >
-            <Text style={styles.username}>{Usuario.nome}</Text>
+            <Text style={styles.username}>{usuario.nome}</Text>
           </ImageBackground>
         </View>
-        <View style={{marginRight: '35%'}}>
+        <View style={{ marginRight: '35%' }}>
           <SvgComponentLogoHeader />
         </View>
-        
-
       </View>
 
       <Text style={styles.greeting}>Olá, João!</Text>
@@ -75,7 +78,8 @@ const RegisterSection: React.FC = () => {
               <Text style={styles.registrarText}>Registrar</Text>
             </TouchableOpacity>
           </View>
-          <SvgComponent source={require("./assets/SVG_Livros")} />
+          {/* CORRIGIDO: Removido o source={} que estava injetando texto solto */}
+          <SvgComponent />
         </View>
       </View>
     </View>
@@ -115,8 +119,6 @@ const styles = StyleSheet.create({
     color: "#2F2E41",
     shadowColor: "black",
     elevation: 5,
-    
-    
   },
   registrarText: {
     fontWeight: "bold",
@@ -187,7 +189,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
-
   containerReg: {
     flexDirection: "column",
   },

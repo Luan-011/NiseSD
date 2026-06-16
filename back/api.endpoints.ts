@@ -1,3 +1,7 @@
-const ngrok = "https://0294-2804-14d-14a2-99ac-917c-ac4b-5110-39f7.ngrok-free.app"
+const ngrok = "https://vascular-virtuous-acutely.ngrok-free.dev"
 
+// Verifique se a rota de LOGIN termina com /auth/signin
 export const PostLoginEndpoint = `${ngrok}/auth/signin`
+
+// E a de cadastro termina com /auth/signup
+export const PostCadastroEndpoint = `${ngrok}/auth/signup`

@@ -26,8 +26,10 @@ export default function SplashScreen() {
       });
     });
 
+    // 🌟 CORRIGIDO: Agora a animação termina e te joga para a tela de login ('inicio'),
+    // respeitando a trava de segurança que colocamos no App.tsx!
     Animated.sequence(animations).start(() => {
-      navigation.navigate('home');
+      navigation.navigate('inicio');
     });
   }, [navigation]);
 
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
   },
   image: {
     position: 'absolute',
-    flex: 1
+    width: width,   // Ajustado para garantir que cubra a tela corretamente
+    height: height, // Ajustado para garantir que cubra a tela corretamente
   },
 });

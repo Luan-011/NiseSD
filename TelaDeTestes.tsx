@@ -7,18 +7,14 @@ import {
   ImageBackground,
   ScrollView,
 } from "react-native";
-import {
-  NavigationProp,
-  useNavigation,
-} from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Importação de Assets
 import SvgComponentVoltar from "./assets/SetaBack";
 import SvgComponentLogoAzulInicio from "./assets/LogoAzulInicio";
 
-// Se as avaliações ainda estiverem no App.tsx, aponte para lá:
-import { Avaliacoes } from "./App"; 
+// ⚠️ CORREÇÃO: Importação vindo do arquivo de serviço para limpar o ciclo!
+import { Avaliacoes } from "./userService"; 
 
 function TelaDeTestes() {
   const navigation = useNavigation<NavigationProp<any>>();
@@ -50,7 +46,7 @@ function TelaDeTestes() {
             <View style={styles.containerLogo}>
               <SvgComponentLogoAzulInicio />
             </View>
-            <View style={{ width: 40 }} /> 
+            <View style={{ width: 40 }} />
           </View>
 
           {/* Lista de Avaliações */}
@@ -60,7 +56,7 @@ function TelaDeTestes() {
                 <View key={`avaliacao-${index}`} style={styles.itens}>
                   <View style={styles.row}>
                     <Text style={styles.textPrin}>Teve alguma crise?: </Text>
-                    <Text>{item.teveCrise ? "Sim" : "Não"}</Text>
+                    <Text style={{ color: "#000" }}>{item.teveCrise ? "Sim" : "Não"}</Text>
                   </View>
 
                   <View style={styles.section}>
@@ -76,7 +72,7 @@ function TelaDeTestes() {
 
                   <View style={styles.row}>
                     <Text style={styles.textPrin}>Classificação do dia: </Text>
-                    <Text>{item.classificacao}</Text>
+                    <Text style={{ color: "#000" }}>{item.classificacao}</Text>
                   </View>
 
                   <View style={styles.section}>
@@ -159,6 +155,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 10,
     fontSize: 13,
+    color: "#000",
   },
   acontecimentosText: {
     marginTop: 2,
